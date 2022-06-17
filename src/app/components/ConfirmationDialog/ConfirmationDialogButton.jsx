@@ -23,13 +23,16 @@
 
 import React from 'react';
 import cx from 'classnames';
-import styles from './index.styl';
+import PropTypes from 'prop-types';
+
 import { DIALOG_CANCEL, DIALOG_CONFIRM } from './ConfirmationDialogLib';
+import styles from './index.styl';
 
 
 const ConfirmationDialogButton = ({ children, onClick, variant = DIALOG_CONFIRM }) => {
     return (
         <button
+            type="button"
             onClick={onClick}
             className={cx(styles.confirmationDialogButton,
                 { [styles.confirmationDialogButtonConfirm]: variant === DIALOG_CONFIRM },
@@ -38,6 +41,11 @@ const ConfirmationDialogButton = ({ children, onClick, variant = DIALOG_CONFIRM 
             {children}
         </button>
     );
+};
+
+ConfirmationDialogButton.propTypes = {
+    onClick: PropTypes.func,
+    variant: PropTypes.string
 };
 
 export default ConfirmationDialogButton;
