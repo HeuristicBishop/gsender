@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 import * as WebGL from 'app/lib/three/WebGL';
 import { GRBL_ACTIVE_STATE_ALARM, GRBL_ACTIVE_STATE_HOLD, WORKFLOW_STATE_IDLE } from 'app/constants';
@@ -19,7 +21,18 @@ import { MODAL_WATCH_DIRECTORY } from './constants';
 import styles from './index.styl';
 
 
-const PrimaryVisualizer = ({ actions, state, capable, showLoading, showRendering, showVisualizer, visualizerRef, workflowRef, widgetContentRef }) => {
+const PrimaryVisualizer = ({
+    actions,
+    state,
+    capable,
+    showLoading,
+    showRendering,
+    showVisualizer,
+    visualizerRef,
+    workflowRef,
+    widgetContentRef,
+    modalList
+}) => {
     const { liteMode, modal, cameraPosition, invalidLine, invalidGcode, alarmCode, activeState, workflow, isConnected } = state;
     const isHomingAlarm = activeState === GRBL_ACTIVE_STATE_ALARM && alarmCode === 'Homing'; // We are alarmed and
     const holdWithoutWorkflowPause = activeState === GRBL_ACTIVE_STATE_HOLD && workflow.state === WORKFLOW_STATE_IDLE;
@@ -34,7 +47,20 @@ const PrimaryVisualizer = ({ actions, state, capable, showLoading, showRendering
                 <Widget.Title>
                     Visualizer
                 </Widget.Title>
-                <Widget.Controls style={{ top: '-4px' }}>
+                <Widget.Controls style={{ top: '-4px', display: 'flex', alignItems: 'center' }}>
+                    <div>
+                        {
+                            Object.keys(modalList).length > 0 &&
+                                (
+                                    <div style={{ display: 'flex', gap: '2rem' }}>
+                                        <span>Units: <strong>{modalList.units}</strong></span>{' '}
+                                        <span>Motion: <strong>{modalList.motion}</strong></span>{' '}
+                                        <span>Feedrate: <strong>{modalList.feedrate}</strong></span>{' '}
+                                        <span>Plane: <strong>{modalList.plane}</strong></span>
+                                    </div>
+                                )
+                        }
+                    </div>
                     <ToggleSwitch
                         label="Lightweight Mode"
                         checked={liteMode}
