@@ -154,6 +154,11 @@ PrimaryVisualizer.propTypes = {
     workflowRef: PropTypes.func,
     widgetContentRef: PropTypes.func,
     containerID: PropTypes.string,
+    modalList: PropTypes.object
 };
 
-export default PrimaryVisualizer;
+export default connect((store) => {
+    const modalList = get(store, 'controller.modal');
+
+    return { modalList };
+}, null, null, { forwardRef: true })(PrimaryVisualizer);
