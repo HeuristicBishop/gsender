@@ -140,6 +140,7 @@ const defaultState = {
         },
         terminal: {
             inputHistory: [],
+            nLinesToCopy: 50,
         }
     },
     widgets: {
