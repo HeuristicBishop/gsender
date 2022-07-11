@@ -29,9 +29,12 @@ import controller from 'app/lib/controller';
 import Events from 'app/containers/Preferences/ToolChange';
 import ProgramEvents from 'app/containers/Preferences/Events';
 import gamepad from 'app/lib/gamepad';
+import { METRIC_UNITS, TERMINAL_MAX_LINES_TO_COPY } from 'app/constants';
+
 import { Toaster, TOASTER_SUCCESS } from '../../lib/toaster/ToasterLib';
 import General from './General';
 import Shortcuts from './Keybindings';
+import Terminal from './Terminal';
 import ProbeSettings from './Probe';
 import SpindleLaser from './SpindleLaser';
 import WidgetConfig from '../../widgets/WidgetConfig';
@@ -39,7 +42,6 @@ import VisualizerSettings from './Visualizer';
 import About from './About';
 import store from '../../store';
 import styles from './index.styl';
-import { METRIC_UNITS } from '../../constants';
 import { convertToImperial, convertToMetric } from './calculate';
 import { CUST_LIGHT_THEME, DARK_THEME, DARK_THEME_VALUES, LIGHT_THEME, LIGHT_THEME_VALUES } from '../../widgets/Visualizer/constants';
 
@@ -107,11 +109,16 @@ class PreferencesPage extends PureComponent {
                 },
                 {
                     id: 6,
+                    label: 'Terminal',
+                    component: Terminal
+                },
+                {
+                    id: 7,
                     label: 'Start/Stop G-Code',
                     component: ProgramEvents,
                 },
                 {
-                    id: 7,
+                    id: 8,
                     label: 'About',
                     component: About,
                 }
@@ -143,8 +150,11 @@ class PreferencesPage extends PureComponent {
                 disabled: this.visualizerConfig.get('disabled'),
                 disabledLite: this.visualizerConfig.get('disabledLite')
             },
+            terminal: {
+                nLinesToCopy: store.get('workspace.terminal.nLinesToCopy'),
+            },
             showWarning: store.get('widgets.visualizer.showWarning'),
-            showLineWarnings: store.get('widgets.visualizer.showLineWarnings'),
+            showLineWarnings: store.get('widgets.visualizer.showLineWarnings', 50),
         };
     }
 
@@ -713,6 +723,17 @@ class PreferencesPage extends PureComponent {
                 }
                 pubsub.publish('visualizer:settings');
             }
+        },
+        terminal: {
+            updateCopyLines: (val) => {
+                let value = Number(val);
+
+                if (value > TERMINAL_MAX_LINES_TO_COPY) {
+                    value = TERMINAL_MAX_LINES_TO_COPY;
+                }
+
+                this.setState(prev => ({ terminal: { ...prev.terminal, nLinesToCopy: value } }));
+            }
         }
     }
 
@@ -727,7 +748,7 @@ class PreferencesPage extends PureComponent {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { tools, tool, probe, probeSettings, units, reverseWidgets, autoReconnect, visualizer, safeRetractHeight, spindle } = this.state;
+        const { tools, tool, probe, probeSettings, units, reverseWidgets, autoReconnect, visualizer, safeRetractHeight, spindle, terminal } = this.state;
 
         store.set('workspace.reverseWidgets', reverseWidgets);
         store.set('workspace.safeRetractHeight', safeRetractHeight);
@@ -747,6 +768,7 @@ class PreferencesPage extends PureComponent {
         this.probeConfig.set('probeFeedrate', probeSettings.normalFeedrate);
         this.probeConfig.set('probeFastFeedrate', probeSettings.fastFeedrate);
         this.probeConfig.set('connectivityTest', probeSettings.connectivityTest);
+        store.replace('workspace.terminal.nLinesToCopy', terminal.nLinesToCopy);
 
         controller.command('settings:updated', this.state);
 
