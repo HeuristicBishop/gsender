@@ -170,3 +170,5 @@ export const VISUALIZER_SECONDARY = 'VISUALIZER_SECONDARY';
 export const MACRO_FORM_TYPES = ['ADD', 'EDIT'];
 
 export const SPINDLE_MODES = ['M3', 'M4', 'M5'];
+
+export const TERMINAL_MAX_LINES_TO_COPY = 1000;
