@@ -20,7 +20,7 @@ const Tooltip = ({ location, content, disabled, children, style, wrapperStyle })
 
 Tooltip.propTypes = {
     location: PropTypes.string,
-    content: PropTypes.string || PropTypes.node,
+    content: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.func]),
     disabled: PropTypes.bool,
 };
 
