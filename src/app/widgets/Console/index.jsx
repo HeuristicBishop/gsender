@@ -192,9 +192,8 @@ class ConsoleWidget extends PureComponent {
     }
 
     render() {
-        const { widgetId, embedded, active } = this.props;
-        const { minimized, isFullscreen } = this.state;
-        const isForkedWidget = widgetId.match(/\w+:[\w\-]+/);
+        const { active } = this.props;
+        const { minimized } = this.state;
         const state = {
             ...this.state
         };
@@ -203,23 +202,12 @@ class ConsoleWidget extends PureComponent {
         };
 
         return (
-            <Widget fullscreen={isFullscreen}>
-                <Widget.Header embedded={embedded}>
-                    <Widget.Title>
-                        {isForkedWidget &&
-                        <i className="fa fa-code-fork" style={{ marginRight: 5 }} />
-                        }
-                        {i18n._('Console')}
-                    </Widget.Title>
-                    <Widget.Controls>
-                    </Widget.Controls>
-                </Widget.Header>
+            <Widget>
                 <Widget.Content
                     className={cx(
                         styles.widgetContent,
                         styles.terminalContent,
                         { [styles.hidden]: minimized },
-                        { [styles.fullscreen]: isFullscreen }
                     )}
                     style={{ width: '100%' }}
                 >
